@@ -1,0 +1,29 @@
+syntax = "proto3";
+option go_package = "github.com/ragul28/grpc-event-stream/event";
+
+package event;
+
+// Event definition
+service Event {
+    // Get all Event - server streaming
+    rpc GetEvent(GetEventFilter) returns (stream EventRequest) {}
+
+    // Create new Event - unary
+    rpc CreateEvent(EventRequest) returns (EventResponse) {}
+}
+
+// Request massage for CreateEvent
+message EventRequest {
+    int32 id = 1;
+    string name = 2;
+    string status = 3;
+}
+
+message EventResponse {
+    int32 id = 1;
+    bool success = 2;
+}
+
+message GetEventFilter {
+    string id = 1;
+}
