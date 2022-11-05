@@ -48,5 +48,7 @@ func main() {
 	// Creates a new gRPC server
 	s := grpc.NewServer()
 	pb.RegisterEventServer(s, &server{})
+
+	log.Printf("gRPC Server listening on %v", port)
 	s.Serve(lis)
 }
