@@ -14,13 +14,13 @@ service Event {
 
 // Request massage for CreateEvent
 message EventRequest {
-    int32 id = 1;
+    string id = 1;
     string name = 2;
     string status = 3;
 }
 
 message EventResponse {
-    int32 id = 1;
+    string id = 1;
     bool success = 2;
 }
 
