@@ -1,12 +1,31 @@
 package stream
 
 import (
+	"log"
+
 	"github.com/nats-io/nats.go"
 )
 
 func JetStreamInit(StreamName string) (nats.JetStreamContext, error) {
+	// Connect to NATS
+	nc, err := nats.Connect(nats.DefaultURL)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	// Create JetStream Context
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
+	if err != nil {
+		return nil, err
+	}
+
+	// Create a stream if it does not exist
+	err = CreateStream(js, StreamName)
+	if err != nil {
+		return nil, err
+	}
+
+	return js, nil
 }
 
 func CreateStream(jetStream nats.JetStreamContext, StreamName string) error {
