@@ -3,6 +3,7 @@ module github.com/ragul28/grpc-event-stream
 go 1.19
 
 require (
+	github.com/lib/pq v1.10.7
 	golang.org/x/net v0.0.0-20201021035429-f5854403a974
 	google.golang.org/grpc v1.50.1
 	google.golang.org/protobuf v1.28.1
