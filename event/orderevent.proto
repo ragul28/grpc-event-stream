@@ -5,11 +5,14 @@ package event;
 
 // Event definition
 service Event {
-    // Get all Event - server streaming
-    rpc GetEvent(GetEventFilter) returns (stream EventRequest) {}
+    // Get Event - unary
+    rpc GetEvent(GetEventFilter) returns (GetEventResponse) {}
 
     // Create new Event - unary
     rpc CreateEvent(EventRequest) returns (EventResponse) {}
+
+    // Get all Event - server streaming
+    // rpc GetEvents(GetEventFilter) returns (stream EventRequest) {}
 }
 
 // Request massage for CreateEvent
@@ -25,4 +28,9 @@ message EventResponse {
 
 message GetEventFilter {
     string id = 1;
+}
+
+message GetEventResponse {
+    string id = 1;
+    string name = 2;
 }
