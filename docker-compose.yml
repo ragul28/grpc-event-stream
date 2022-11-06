@@ -14,3 +14,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 15s
+
+  nats:
+    container_name: nats-js
+    image: nats:2.9-alpine
+    ports:
+      - "4222:4222"
+    command: "-js --http_port 8222"
+    networks: ["nats"]
