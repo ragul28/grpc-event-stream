@@ -1,9 +1,8 @@
-package db
+package psql
 
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
 	"strconv"
 
@@ -16,7 +15,7 @@ func CreateConnection() (*sql.DB, error) {
 	host := getEnv("DB_HOST", "localhost")
 	user := getEnv("DB_USER", "postgres")
 	dbname := getEnv("DB_NAME", "postgres")
-	password := getEnv("DB_PASSWORD", "")
+	password := getEnv("DB_PASSWORD", "postgres")
 	port, _ := strconv.Atoi(getEnv("DB_PORT", "5432"))
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable",
@@ -26,15 +25,6 @@ func CreateConnection() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		return nil, err
-	}
-
-	log.Println("Successfully connected!")
-
 	return db, nil
 }
 
