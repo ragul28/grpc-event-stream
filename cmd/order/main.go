@@ -4,9 +4,10 @@ import (
 	"context"
 	"log"
 	"net"
-	"strings"
 
 	pb "github.com/ragul28/grpc-event-stream/event"
+	psql "github.com/ragul28/grpc-event-stream/pkg/db"
+	"github.com/ragul28/grpc-event-stream/pkg/repository"
 	"google.golang.org/grpc"
 )
 
@@ -15,39 +16,52 @@ const (
 )
 
 type server struct {
-	savedEvent []*pb.EventRequest
 	pb.UnimplementedEventServer
+	repo repository.Repository
 }
 
 // CreateEvent creates a new Event
 func (s *server) CreateEvent(ctx context.Context, in *pb.EventRequest) (*pb.EventResponse, error) {
-	s.savedEvent = append(s.savedEvent, in)
-	return &pb.EventResponse{Id: in.Id, Success: true}, nil
+	res, err := s.repo.CreateOrder(in)
+	if err != nil {
+		return nil, err
+	}
+
+	return res, nil
 }
 
-// GetEvents returns all Events by given filter
-func (s *server) GetEvent(filter *pb.GetEventFilter, stream pb.Event_GetEventServer) error {
-	for _, Event := range s.savedEvent {
-		if filter.Id != "" {
-			if !strings.Contains(Event.Id, filter.Id) {
-				continue
-			}
-		}
-		if err := stream.Send(Event); err != nil {
-			return err
-		}
+func (s *server) GetEvent(ctx context.Context, filter *pb.GetEventFilter) (*pb.GetEventResponse, error) {
+	res, err := s.repo.GetOrder(filter)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+
+	return res, nil
 }
 
 func main() {
+	db, err := psql.CreateConnection()
+	defer db.Close()
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	log.Println("DB Successfully connected!")
+	repository := &repository.OrderRepository{DB: db}
+
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	// Creates a new gRPC server
 	s := grpc.NewServer()
-	pb.RegisterEventServer(s, &server{})
+
+	server := &server{
+		repo: repository,
+	}
+	pb.RegisterEventServer(s, server)
 
 	log.Printf("gRPC Server listening on %v", port)
 	s.Serve(lis)

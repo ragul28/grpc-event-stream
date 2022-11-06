@@ -1,7 +1,6 @@
 package main
 
 import (
-	"io"
 	"log"
 
 	"golang.org/x/net/context"
@@ -21,27 +20,18 @@ func createEvent(client pb.EventClient, Event *pb.EventRequest) {
 		log.Fatalf("Could not create Event: %v", err)
 	}
 	if resp.Success {
-		log.Printf("A new Event has been added with id: %s", resp.Id)
+		log.Printf("Event added id: %s", resp.Id)
 	}
 }
 
 // getEvents calls the RPC method GetEvents of EventServer
 func getEvents(client pb.EventClient, filter *pb.GetEventFilter) {
 	// calling the streaming API
-	stream, err := client.GetEvent(context.Background(), filter)
+	resp, err := client.GetEvent(context.Background(), filter)
 	if err != nil {
-		log.Fatalf("Error on get Events: %v", err)
+		log.Fatalf("Error on get Event: %v", err)
 	}
-	for {
-		Event, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			log.Fatalf("%v.GetEvents(_) = _, %v", client, err)
-		}
-		log.Printf("Event: %v", Event)
-	}
+	log.Printf("Get Event id %s: %s", filter.Id, resp.Name)
 }
 
 func main() {
