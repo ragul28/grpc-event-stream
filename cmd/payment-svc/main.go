@@ -39,7 +39,7 @@ func consumeEvent(js nats.JetStreamContext) {
 
 		err = json.Unmarshal(m.Data, &orderEvt)
 		if err != nil {
-			log.Fatal(err)
+			log.Panic(err)
 		}
 
 		log.Printf("Consumer  =>  Subject: %s  -  ID: %s  -  Name: %s\n", m.Subject, orderEvt.Id, orderEvt.Name)
