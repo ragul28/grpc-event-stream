@@ -15,7 +15,7 @@ services:
       retries: 3
       start_period: 15s
     volumes:
-      - ./data/postgras:/var/lib/postgresql/data
+      - ./.data/postgras:/var/lib/postgresql/data
 
   nats:
     container_name: nats-js
@@ -24,4 +24,4 @@ services:
       - "4222:4222"
     command: "-js --sd /data --http_port 8222"
     volumes:
-      - ./data/nats:/data
+      - ./.data/nats:/data
