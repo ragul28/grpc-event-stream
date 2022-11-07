@@ -29,9 +29,9 @@ func JetStreamInit(StreamName string) (nats.JetStreamContext, error) {
 }
 
 func CreateStream(jetStream nats.JetStreamContext, StreamName string) error {
-	stream, err := jetStream.StreamInfo(StreamName)
-
 	StreamSubjects := StreamName + ".*"
+
+	stream, err := jetStream.StreamInfo(StreamName)
 	// stream not found, create it
 	if stream == nil {
 		log.Printf("Creating stream: %s\n", StreamName)

@@ -12,7 +12,7 @@ bin/
 */bin/*
 tmp/
 dist/
-data/
+.data/
 .vscode/
 
 # Unignore files
