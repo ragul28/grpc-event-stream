@@ -8,6 +8,7 @@ import (
 
 	"github.com/nats-io/nats.go"
 	pb "github.com/ragul28/grpc-event-stream/event"
+	"github.com/ragul28/grpc-event-stream/internal/model"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
 	"github.com/ragul28/grpc-event-stream/pkg/repository"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
@@ -15,8 +16,9 @@ import (
 )
 
 const (
-	port       = ":50050"
-	streamName = "ORDERS"
+	port               = ":50050"
+	streamName         = "ORDERS"
+	streamSubjectsname = "ORDERS.new"
 )
 
 type server struct {
@@ -33,11 +35,11 @@ func (s *server) CreateEvent(ctx context.Context, in *pb.EventRequest) (*pb.Even
 		return nil, err
 	}
 
-	values := map[string]string{"id": in.Id, "name": in.Name}
-	jsonValue, _ := json.Marshal(values)
+	orderVal := model.OrderEvent{Id: in.Id, Name: in.Name}
+	jsonValue, _ := json.Marshal(orderVal)
 
 	// Publish order on nats jetstream
-	s.nats.Publish(streamName, jsonValue)
+	s.nats.Publish(streamSubjectsname, jsonValue)
 	return res, nil
 }
 
