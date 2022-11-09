@@ -1,14 +1,11 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"log"
 	"net"
 
-	"github.com/nats-io/nats.go"
 	pb "github.com/ragul28/grpc-event-stream/event"
-	"github.com/ragul28/grpc-event-stream/internal/model"
+	"github.com/ragul28/grpc-event-stream/internal/order"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
 	"github.com/ragul28/grpc-event-stream/pkg/repository"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
@@ -16,41 +13,9 @@ import (
 )
 
 const (
-	port               = ":50050"
-	streamName         = "ORDERS"
-	streamSubjectsname = "ORDERS.new"
+	port       = ":50050"
+	streamName = "ORDERS"
 )
-
-type server struct {
-	pb.UnimplementedEventServer
-	repo repository.Repository
-	nats nats.JetStreamContext
-}
-
-// CreateEvent creates a new Event
-func (s *server) CreateEvent(ctx context.Context, in *pb.EventRequest) (*pb.EventResponse, error) {
-	// Store the order on DB
-	res, err := s.repo.CreateOrder(in)
-	if err != nil {
-		return nil, err
-	}
-
-	orderVal := model.OrderEvent{Id: in.Id, Name: in.Name}
-	jsonValue, _ := json.Marshal(orderVal)
-
-	// Publish order on nats jetstream
-	s.nats.Publish(streamSubjectsname, jsonValue)
-	return res, nil
-}
-
-func (s *server) GetEvent(ctx context.Context, filter *pb.GetEventFilter) (*pb.GetEventResponse, error) {
-	res, err := s.repo.GetOrder(filter)
-	if err != nil {
-		return nil, err
-	}
-
-	return res, nil
-}
 
 func main() {
 	db, err := psql.CreateConnection()
@@ -77,9 +42,9 @@ func main() {
 	// Creates a new gRPC server
 	s := grpc.NewServer()
 
-	server := &server{
-		repo: repository,
-		nats: js,
+	server := &order.Server{
+		Repo: repository,
+		Nats: js,
 	}
 	pb.RegisterEventServer(s, server)
 
