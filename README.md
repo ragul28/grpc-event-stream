@@ -2,6 +2,12 @@
 
 Event stream based Go microservice project using Nats JetStream, PostgresSQL & gRPC. Exhibit project with cloud native ecosystem & tools
 
+## Prerequisites
+
+* Golang 1.19+
+* Docker 20+ (compose extension)
+* Protoc compiler 3.8+
+
 ## Running
 
 * Clone project & fetch go dependency
