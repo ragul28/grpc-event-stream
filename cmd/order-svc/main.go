@@ -6,8 +6,8 @@ import (
 
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/order"
+	"github.com/ragul28/grpc-event-stream/internal/repository"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
-	"github.com/ragul28/grpc-event-stream/pkg/repository"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
 	"google.golang.org/grpc"
 )

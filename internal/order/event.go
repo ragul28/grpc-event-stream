@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/model"
-	"github.com/ragul28/grpc-event-stream/pkg/repository"
+	"github.com/ragul28/grpc-event-stream/internal/repository"
 )
 
 const (
