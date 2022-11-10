@@ -6,8 +6,6 @@ import (
 
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/payment"
-	psql "github.com/ragul28/grpc-event-stream/pkg/db"
-	"github.com/ragul28/grpc-event-stream/pkg/repository"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
 	"google.golang.org/grpc"
 )
@@ -18,16 +16,6 @@ const (
 )
 
 func main() {
-	db, err := psql.CreateConnection()
-	defer db.Close()
-
-	err = db.Ping()
-	if err != nil {
-		log.Fatalln(err)
-	}
-
-	log.Println("DB Successfully connected!")
-	repository := &repository.OrderRepository{DB: db}
 
 	js, err := stream.JetStreamInit(streamName)
 	if err != nil {
@@ -43,7 +31,6 @@ func main() {
 	s := grpc.NewServer()
 
 	server := &payment.Server{
-		Repo: repository,
 		Nats: js,
 	}
 	pb.RegisterEventServer(s, server)

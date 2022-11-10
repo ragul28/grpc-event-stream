@@ -7,7 +7,6 @@ import (
 	"github.com/nats-io/nats.go"
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/model"
-	"github.com/ragul28/grpc-event-stream/pkg/repository"
 )
 
 const (
@@ -16,7 +15,6 @@ const (
 
 type Server struct {
 	pb.UnimplementedEventServer
-	Repo repository.Repository
 	Nats nats.JetStreamContext
 }
 
