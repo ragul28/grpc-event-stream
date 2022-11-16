@@ -15,3 +15,6 @@ build:
 
 docker:
 	docker compose -f ./docker-compose.yml build
+
+db_migrate:
+	migrate -database ${POSTGRESQL_URL} -path migrations up

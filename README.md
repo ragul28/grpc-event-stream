@@ -26,6 +26,11 @@ Event stream based Go microservice project using Nats JetStream, PostgresSQL & g
     docker compose up -d
     ```
 
+* Run DB migrations create tables. 
+    ```sh
+    migrate -database ${POSTGRESQL_URL} -path migrations up
+    ```
+
 * Run all the microservices in seprate shell 
     ```sh
     go run cmd/order-svc/main.go
