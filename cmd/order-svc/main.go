@@ -8,6 +8,7 @@ import (
 	"github.com/ragul28/grpc-event-stream/internal/order"
 	"github.com/ragul28/grpc-event-stream/internal/repository"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
+	"github.com/ragul28/grpc-event-stream/pkg/getenv"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
 	"google.golang.org/grpc"
 )
@@ -35,7 +36,8 @@ func main() {
 		return
 	}
 
-	lis, err := net.Listen("tcp", port)
+	port := getenv.GetEnv("PORT", port)
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
@@ -48,6 +50,6 @@ func main() {
 	}
 	pb.RegisterEventServer(s, server)
 
-	log.Printf("gRPC Server listening on %v", port)
+	log.Printf("gRPC Server listening on %v", ":"+port)
 	s.Serve(lis)
 }

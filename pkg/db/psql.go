@@ -3,8 +3,9 @@ package psql
 import (
 	"database/sql"
 	"fmt"
-	"os"
 	"strconv"
+
+	"github.com/ragul28/grpc-event-stream/pkg/getenv"
 
 	_ "github.com/lib/pq"
 )
@@ -12,11 +13,11 @@ import (
 func CreateConnection() (*sql.DB, error) {
 
 	// postgres db connection vars
-	host := getEnv("DB_HOST", "localhost")
-	user := getEnv("DB_USER", "postgres")
-	dbname := getEnv("DB_NAME", "postgres")
-	password := getEnv("DB_PASSWORD", "postgres")
-	port, _ := strconv.Atoi(getEnv("DB_PORT", "5432"))
+	host := getenv.GetEnv("DB_HOST", "localhost")
+	user := getenv.GetEnv("DB_USER", "postgres")
+	dbname := getenv.GetEnv("DB_NAME", "postgres")
+	password := getenv.GetEnv("DB_PASSWORD", "postgres")
+	port, _ := strconv.Atoi(getenv.GetEnv("DB_PORT", "5432"))
 
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+"password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
@@ -26,12 +27,4 @@ func CreateConnection() (*sql.DB, error) {
 		return nil, err
 	}
 	return db, nil
-}
-
-func getEnv(key, fallback string) string {
-	value := os.Getenv(key)
-	if len(value) == 0 {
-		return fallback
-	}
-	return value
 }
