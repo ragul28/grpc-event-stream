@@ -52,10 +52,11 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, req *http.Request) {
 	}
 	err := h.repository.CreateOrder(client, event)
 	if err != nil {
-		log.Panicln(err)
+		log.Println(err)
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
 	}
-
-	w.WriteHeader(http.StatusOK)
 }
 
 // Get Order
@@ -65,7 +66,6 @@ func (h *Handler) GetOrder(w http.ResponseWriter, req *http.Request) {
 	if reqId == "" {
 		log.Println("Id cannot be empty")
 	}
-	log.Println("Get userid:", reqId)
 
 	conn := grpcutil.GetgrpcConn()
 	defer conn.Close()
@@ -76,9 +76,10 @@ func (h *Handler) GetOrder(w http.ResponseWriter, req *http.Request) {
 	filter := &pb.GetEventFilter{Id: reqId}
 	resOrder, err := h.repository.GetOrder(client, filter)
 	if err != nil {
-		log.Println(err)
+		log.Println("GetOrder", err)
+		w.WriteHeader(http.StatusBadRequest)
+	} else {
+		w.WriteHeader(http.StatusOK)
+		json.NewEncoder(w).Encode(resOrder)
 	}
-
-	json.NewEncoder(w).Encode(resOrder)
-	w.WriteHeader(http.StatusOK)
 }
