@@ -58,3 +58,17 @@ services:
       NATS_URL: "nats://nats:4222"
     depends_on: 
       - nats
+
+  gateway:
+    build:
+      context: ./build
+      args:
+        SERVICE: gateway
+    image: ghcr.io/ragul28/grpc-event-stream/gateway
+    ports:
+      - 8082:8080
+    environment:
+      PORT: 8080
+      ORDER_GRPC_ADDR: "order-service:8080"
+    depends_on: 
+      - order-service
