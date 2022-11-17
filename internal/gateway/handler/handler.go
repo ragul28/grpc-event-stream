@@ -9,13 +9,7 @@ import (
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/gateway/service"
 	"github.com/ragul28/grpc-event-stream/internal/model"
-	"github.com/ragul28/grpc-event-stream/pkg/getenv"
-
-	"google.golang.org/grpc"
-)
-
-const (
-	address = "localhost:8080"
+	"github.com/ragul28/grpc-event-stream/pkg/grpcutil"
 )
 
 type Handler struct {
@@ -47,7 +41,7 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	conn := getgrpcConn()
+	conn := grpcutil.GetgrpcConn()
 	defer conn.Close()
 
 	client := pb.NewEventClient(conn)
@@ -73,7 +67,7 @@ func (h *Handler) GetOrder(w http.ResponseWriter, req *http.Request) {
 	}
 	log.Println("Get userid:", reqId)
 
-	conn := getgrpcConn()
+	conn := grpcutil.GetgrpcConn()
 	defer conn.Close()
 
 	client := pb.NewEventClient(conn)
@@ -87,14 +81,4 @@ func (h *Handler) GetOrder(w http.ResponseWriter, req *http.Request) {
 
 	json.NewEncoder(w).Encode(resOrder)
 	w.WriteHeader(http.StatusOK)
-}
-
-func getgrpcConn() *grpc.ClientConn {
-	// Set up a connection to the gRPC server.
-	conn, err := grpc.Dial(getenv.GetEnv("ORDER_GRPC_ADDR", address), grpc.WithInsecure())
-	if err != nil {
-		log.Fatalf("did not connect: %v", err)
-	}
-
-	return conn
 }
