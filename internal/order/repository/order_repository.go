@@ -2,6 +2,7 @@ package repository
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	pb "github.com/ragul28/grpc-event-stream/event"
@@ -36,11 +37,11 @@ func (repo *OrderRepository) GetOrder(ef *pb.GetEventFilter) (*pb.GetEventRespon
 
 	switch err := row.Scan(&name); err {
 	case sql.ErrNoRows:
-		log.Println("No records no table!")
+		return nil, fmt.Errorf("No records no table!")
 	case nil:
 		log.Println(ef.Id, name)
 	default:
-		log.Panicln(err)
+		return nil, fmt.Errorf("GetOrder: Bad input :: %e", err)
 	}
 
 	return &pb.GetEventResponse{Id: ef.Id, Name: name}, nil
