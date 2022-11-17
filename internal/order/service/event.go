@@ -1,4 +1,4 @@
-package order
+package service
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	"github.com/nats-io/nats.go"
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/model"
-	"github.com/ragul28/grpc-event-stream/internal/repository"
+	"github.com/ragul28/grpc-event-stream/internal/order/repository"
 )
 
 const (

@@ -5,8 +5,8 @@ import (
 	"net"
 
 	pb "github.com/ragul28/grpc-event-stream/event"
-	"github.com/ragul28/grpc-event-stream/internal/order"
-	"github.com/ragul28/grpc-event-stream/internal/repository"
+	"github.com/ragul28/grpc-event-stream/internal/order/repository"
+	order "github.com/ragul28/grpc-event-stream/internal/order/service"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
 	"github.com/ragul28/grpc-event-stream/pkg/getenv"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
