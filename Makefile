@@ -13,8 +13,11 @@ build:
 	mkdir ./build/bin/ || true
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o=./build/bin/. ./cmd/...
 
-docker:
+docker: build
 	docker compose -f ./docker-compose.yml build
 
 db_migrate:
 	migrate -database ${POSTGRESQL_URL} -path migrations up
+
+gw_local:
+	PORT=8083 ORDER_GRPC_ADDR=localhost:8080 go run cmd/gateway/main.go
