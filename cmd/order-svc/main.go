@@ -14,6 +14,7 @@ import (
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
+	healthpb "google.golang.org/grpc/health/grpc_health_v1"
 )
 
 const (
@@ -57,11 +58,14 @@ func main() {
 		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
 	)
 
+	tp.Tracer("order-service")
+
 	server := &order.Server{
 		Repo: repository,
 		Nats: js,
 	}
 	pb.RegisterEventServer(s, server)
+	healthpb.RegisterHealthServer(s, server)
 
 	log.Printf("gRPC Server listening on %v", ":"+port)
 	s.Serve(lis)
