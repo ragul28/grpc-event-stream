@@ -21,4 +21,6 @@ dist/
 !LICENSE
 
 # Ignore files
+kompose/
+helm/
 checklist.md
