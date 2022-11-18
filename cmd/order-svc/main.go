@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net"
 
@@ -9,7 +10,9 @@ import (
 	order "github.com/ragul28/grpc-event-stream/internal/order/service"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
 	"github.com/ragul28/grpc-event-stream/pkg/getenv"
+	"github.com/ragul28/grpc-event-stream/pkg/opentelemetry"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
+	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 )
 
@@ -36,13 +39,23 @@ func main() {
 		return
 	}
 
+	tp := opentelemetry.InitTracerProvider()
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
+
 	port := getenv.GetEnv("PORT", port)
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 	// Creates a new gRPC server
-	s := grpc.NewServer()
+	s := grpc.NewServer(
+		grpc.UnaryInterceptor(otelgrpc.UnaryServerInterceptor()),
+		grpc.StreamInterceptor(otelgrpc.StreamServerInterceptor()),
+	)
 
 	server := &order.Server{
 		Repo: repository,
