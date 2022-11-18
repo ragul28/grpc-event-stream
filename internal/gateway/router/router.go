@@ -4,6 +4,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/ragul28/grpc-event-stream/internal/gateway/handler"
 	"github.com/ragul28/grpc-event-stream/internal/gateway/service"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
 func InitRouter(router *mux.Router) {
@@ -12,6 +13,9 @@ func InitRouter(router *mux.Router) {
 	mws := &service.Middleware{}
 
 	h := handler.NewHandler(repos)
+
+	// Enable otelmux
+	router.Use(otelmux.Middleware("gateway"))
 
 	r := router.PathPrefix("/api/gw").Subrouter()
 
