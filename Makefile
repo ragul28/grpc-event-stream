@@ -16,7 +16,7 @@ build:
 docker: build
 	docker compose -f ./docker-compose.yml build
 
-docker_update: docker
+docker_up: docker
 	docker compose -f ./docker-compose.yml up -d
 
 db_migrate:
