@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/ragul28/grpc-event-stream/pkg/utils"
 )
 
 type Middleware struct{}
@@ -39,5 +41,5 @@ func preflightHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Access-Control-Allow-Headers", strings.Join(headers, ","))
 	methods := []string{"GET", "HEAD", "POST", "PUT", "DELETE"}
 	w.Header().Set("Access-Control-Allow-Methods", strings.Join(methods, ","))
-	log.Println("preflight request for", r.URL.Path)
+	log.Println("preflight request for", utils.Sanitize(r.URL.Path))
 }
