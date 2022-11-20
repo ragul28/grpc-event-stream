@@ -28,4 +28,6 @@ jobs:
       run: go mod download
 
     - name: Go Build
-      run: go build -ldflags="-s -w" -o=./build/bin/. ./cmd/...
+      run: | 
+        mkdir ./build/bin
+        go build -ldflags="-s -w" -o=./build/bin/. ./cmd/...
