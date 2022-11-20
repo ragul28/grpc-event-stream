@@ -8,6 +8,7 @@ import (
 
 	pb "github.com/ragul28/grpc-event-stream/event"
 	"github.com/ragul28/grpc-event-stream/internal/model"
+	"github.com/ragul28/grpc-event-stream/pkg/utils"
 )
 
 type Repository interface {
@@ -37,7 +38,7 @@ func (s *SrvRepository) GetOrder(client pb.EventClient, filter *pb.GetEventFilte
 	if err != nil {
 		return nil, fmt.Errorf("Error on get Event: %v", err)
 	}
-	log.Printf("Get Event id %s: %s", filter.Id, resp.Name)
+	log.Printf("Get Event id %s: %s", utils.Sanitize(filter.Id), resp.Name)
 
 	return &model.OrderEvent{Id: resp.Id, Name: resp.Name}, nil
 }
