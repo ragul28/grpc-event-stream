@@ -9,9 +9,9 @@ import (
 	"github.com/ragul28/grpc-event-stream/internal/order/repository"
 	order "github.com/ragul28/grpc-event-stream/internal/order/service"
 	psql "github.com/ragul28/grpc-event-stream/pkg/db"
-	"github.com/ragul28/grpc-event-stream/pkg/getenv"
 	"github.com/ragul28/grpc-event-stream/pkg/opentelemetry"
 	"github.com/ragul28/grpc-event-stream/pkg/stream"
+	"github.com/ragul28/grpc-event-stream/pkg/utils"
 	"go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 	"google.golang.org/grpc"
 	healthpb "google.golang.org/grpc/health/grpc_health_v1"
@@ -47,7 +47,7 @@ func main() {
 		}
 	}()
 
-	port := getenv.GetEnv("PORT", port)
+	port := utils.GetEnv("PORT", port)
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
