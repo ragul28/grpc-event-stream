@@ -4,12 +4,12 @@ import (
 	"log"
 
 	"github.com/nats-io/nats.go"
-	"github.com/ragul28/grpc-event-stream/pkg/getenv"
+	"github.com/ragul28/grpc-event-stream/pkg/utils"
 )
 
 func JetStreamInit(StreamName string) (nats.JetStreamContext, error) {
 	// Connect to NATS
-	nc, err := nats.Connect(getenv.GetEnv("NATS_URL", nats.DefaultURL))
+	nc, err := nats.Connect(utils.GetEnv("NATS_URL", nats.DefaultURL))
 	if err != nil {
 		return nil, err
 	}
