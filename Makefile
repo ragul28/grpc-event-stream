@@ -11,7 +11,7 @@ mod:
 
 build:
 	mkdir ./build/bin/ || true
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o=./build/bin/. ./cmd/...
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -ldflags="-s -w" -o=./build/bin/. ./cmd/...
 
 docker: build
 	docker compose -f ./docker-compose.yml build
