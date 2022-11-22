@@ -24,3 +24,12 @@ db_migrate:
 
 gw_local:
 	PORT=8083 ORDER_GRPC_ADDR=localhost:8080 go run cmd/gateway/main.go
+
+docker_logs:
+	docker compose logs -f order-service payment-service gateway
+
+docker_otel:
+	docker compose -f ./docker-compose.yml -f ./deploy/compose/docker-compose.otel.yml --env-file ./configs/local.env up -d
+
+docker_otel_down:
+	docker compose -f ./docker-compose.yml -f ./deploy/compose/docker-compose.otel.yml --env-file ./configs/local.env down
