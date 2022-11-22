@@ -1,0 +1,162 @@
+version: '3.9'
+
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+
+services:
+
+  order-service:
+    build:
+      context: ./build
+      args:
+        SERVICE: order-svc
+    image: ghcr.io/ragul28/grpc-event-stream/order-svc
+    container_name: order-svc
+    ports:
+      - 8080:8080
+    environment:
+    - PORT=8080
+    - NATS_URL=nats://nats:4222
+    - DB_HOST=postgres
+    - DB_NAME=postgres
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
+    - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    - OTEL_SERVICE_NAME=order-svc
+    depends_on: 
+      - postgres
+      - nats
+    logging: *logging
+
+  payment-service:
+    build:
+      context: ./build
+      args:
+        SERVICE: payment-svc
+    image: ghcr.io/ragul28/grpc-event-stream/payment-svc
+    container_name: payment-svc
+    ports:
+      - 8081:8080
+    environment:
+    - PORT=8080
+    - NATS_URL=nats://nats:4222
+    - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    - OTEL_SERVICE_NAME=payment-svc
+    depends_on: 
+      - nats
+    logging: *logging
+
+  gateway:
+    build:
+      context: ./build
+      args:
+        SERVICE: gateway
+    image: ghcr.io/ragul28/grpc-event-stream/gateway
+    container_name: gateway
+    ports:
+      - 8082:8080
+    environment:
+    - PORT=8080
+    - ORDER_GRPC_ADDR=order-service:8080
+    - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    - OTEL_SERVICE_NAME=gateway
+    depends_on: 
+      - order-service
+    logging: *logging
+
+  # Jaeger
+  jaeger:
+    image: jaegertracing/all-in-one:1.39
+    container_name: jaeger
+    command: ["--memory.max-traces", "10000", "--query.base-path", "/jaeger/ui"]
+    deploy:
+      resources:
+        limits:
+          memory: 275M
+    restart: always
+    ports:
+      - "${JAEGER_SERVICE_PORT}:${JAEGER_SERVICE_PORT}"
+      - "4317"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    logging: *logging
+
+  # OpenTelemetry Collector
+  otelcol:
+    image: otel/opentelemetry-collector-contrib:0.64.1
+    container_name: otel-col
+    deploy:
+      resources:
+        limits:
+          memory: 100M
+    restart: always
+    command: [ "--config=/etc/otelcol-config.yml", "--config=/etc/otelcol-config-extras.yml" ]
+    volumes:
+      - ./configs/otelcollector/otelcol-config.yml:/etc/otelcol-config.yml
+      - ./configs/otelcollector/otelcol-config-extras.yml:/etc/otelcol-config-extras.yml
+    ports:
+      - "4317:4317"          # OTLP over gRPC receiver
+      - "4318:4318"     # OTLP over HTTP receiver
+      - "9464:9464"          # Prometheus exporter
+      - "8888:8888"          # metrics endpoint
+    depends_on:
+      - jaeger
+    logging: *logging
+
+  # Prometheus
+  prometheus:
+    image: prom/prometheus:v2.40.2
+    container_name: prometheus
+    command:
+      - --web.console.templates=/etc/prometheus/consoles
+      - --web.console.libraries=/etc/prometheus/console_libraries
+      - --storage.tsdb.retention.time=1h
+      - --config.file=/etc/prometheus/prometheus-config.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.enable-lifecycle
+      - --web.route-prefix=/
+    volumes:
+      - ./configs/prometheus/prometheus-config.yaml:/etc/prometheus/prometheus-config.yaml
+    ports:
+      - "${PROMETHEUS_SERVICE_PORT}:${PROMETHEUS_SERVICE_PORT}"
+    logging: *logging
+
+  # Grafana
+  grafana:
+    image: grafana/grafana:9.2.5
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./configs/grafana/grafana.ini:/etc/grafana/grafana.ini
+      - ./configs/grafana/provisioning/:/etc/grafana/provisioning/
+    ports:
+      - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
+    logging: *logging
+
+  mux-example:
+    build:
+      context: ./build
+      args:
+        SERVICE: mux-example
+    image: ghcr.io/ragul28/grpc-event-stream/mux-example
+    container_name: mux-example
+    environment:
+    - PORT=8080
+    - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
+    - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+    - OTEL_SERVICE_NAME=mux-example
+    ports:
+      - 8085:8085
+    logging: *logging
