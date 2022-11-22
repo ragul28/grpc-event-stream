@@ -10,6 +10,11 @@ import (
 	"github.com/ragul28/grpc-event-stream/internal/gateway/service"
 	"github.com/ragul28/grpc-event-stream/internal/model"
 	"github.com/ragul28/grpc-event-stream/pkg/grpcutil"
+	"github.com/ragul28/grpc-event-stream/pkg/utils"
+)
+
+const (
+	address = "localhost:8080"
 )
 
 type Handler struct {
@@ -41,7 +46,7 @@ func (h *Handler) CreateOrder(w http.ResponseWriter, req *http.Request) {
 		return
 	}
 
-	conn := grpcutil.GetgrpcConn()
+	conn := grpcutil.GetgrpcConn(utils.GetEnv("ORDER_GRPC_ADDR", address))
 	defer conn.Close()
 
 	client := pb.NewEventClient(conn)
@@ -67,7 +72,7 @@ func (h *Handler) GetOrder(w http.ResponseWriter, req *http.Request) {
 		log.Println("Id cannot be empty")
 	}
 
-	conn := grpcutil.GetgrpcConn()
+	conn := grpcutil.GetgrpcConn(utils.GetEnv("ORDER_GRPC_ADDR", address))
 	defer conn.Close()
 
 	client := pb.NewEventClient(conn)

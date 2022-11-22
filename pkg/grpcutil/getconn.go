@@ -3,17 +3,12 @@ package grpcutil
 import (
 	"log"
 
-	"github.com/ragul28/grpc-event-stream/pkg/utils"
 	"google.golang.org/grpc"
 )
 
-const (
-	address = "localhost:8080"
-)
-
-func GetgrpcConn() *grpc.ClientConn {
+func GetgrpcConn(grpcAddr string) *grpc.ClientConn {
 	// Set up a connection to the gRPC server.
-	conn, err := grpc.Dial(utils.GetEnv("ORDER_GRPC_ADDR", address), grpc.WithInsecure())
+	conn, err := grpc.Dial(grpcAddr, grpc.WithInsecure())
 	if err != nil {
 		log.Fatalf("did not connect: %v", err)
 	}

@@ -14,7 +14,6 @@ import (
 )
 
 const (
-	port               = ":50050"
 	streamName         = "ORDERS"
 	streamSubjectsname = "ORDERS.new"
 )
