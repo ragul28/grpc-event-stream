@@ -7,7 +7,7 @@ services:
     ports: 
       - 5432:5432
     environment:
-      POSTGRES_PASSWORD: "postgres"
+    - POSTGRES_PASSWORD=postgres
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 60s
@@ -36,12 +36,12 @@ services:
     ports:
       - 8080:8080
     environment:
-      PORT: 8080
-      NATS_URL: "nats://nats:4222"
-      DB_HOST: "postgres"
-      DB_NAME: "postgres"
-      DB_USER: "postgres"
-      DB_PASSWORD: "postgres"
+    - PORT=8080
+    - NATS_URL=nats://nats:4222
+    - DB_HOST=postgres
+    - DB_NAME=postgres
+    - DB_USER=postgres
+    - DB_PASSWORD=postgres
     depends_on: 
       - postgres
       - nats
@@ -56,8 +56,8 @@ services:
     ports:
       - 8081:8080
     environment:
-      PORT: 8080
-      NATS_URL: "nats://nats:4222"
+    - PORT=8080
+    - NATS_URL=nats://nats:4222
     depends_on: 
       - nats
 

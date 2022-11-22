@@ -23,4 +23,6 @@ dist/
 # Ignore files
 kompose/
 helm/
+dashboards/
+mux-example/
 checklist.md
