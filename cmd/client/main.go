@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	address = "localhost:50050"
+	address = "localhost:8080"
 )
 
 // createEvent calls the RPC method CreateEvent of EventServer
