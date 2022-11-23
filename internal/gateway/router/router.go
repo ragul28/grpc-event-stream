@@ -14,10 +14,8 @@ func InitRouter(router *mux.Router) {
 
 	h := handler.NewHandler(repos)
 
-	// Enable otelmux
-	router.Use(otelmux.Middleware("gateway"))
-
 	r := router.PathPrefix("/api/gw").Subrouter()
+	r.Use(otelmux.Middleware("gateway"))
 
 	r.HandleFunc("/", h.HealthEndpoint).Methods("GET")
 	r.HandleFunc("/order/create", mws.Middleware(h.CreateOrder)).Methods("POST")
