@@ -143,20 +143,3 @@ services:
     ports:
       - "${GRAFANA_SERVICE_PORT}:${GRAFANA_SERVICE_PORT}"
     logging: *logging
-
-  mux-example:
-    build:
-      context: ./build
-      args:
-        SERVICE: mux-example
-    image: ghcr.io/ragul28/grpc-event-stream/mux-example
-    container_name: mux-example
-    environment:
-    - PORT=8080
-    - OTEL_EXPORTER_OTLP_TRACES_ENDPOINT
-    - OTEL_EXPORTER_OTLP_METRICS_ENDPOINT
-    - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-    - OTEL_SERVICE_NAME=mux-example
-    ports:
-      - 8085:8085
-    logging: *logging

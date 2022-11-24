@@ -14,7 +14,7 @@ import (
 
 func main() {
 
-	tp, err := opentelemetry.InitTracer()
+	tp, err := opentelemetry.InitTracer("gateway")
 	if err != nil {
 		log.Fatal(err)
 	}
