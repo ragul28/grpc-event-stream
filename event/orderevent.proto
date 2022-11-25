@@ -12,7 +12,7 @@ service Event {
     rpc CreateEvent(EventRequest) returns (EventResponse) {}
 
     // Get all Event - server streaming
-    rpc GetEvents(GetEventFilter) returns (stream EventRequest) {}
+    rpc GetEvents(GetEventFilter) returns (stream GetEventResponse) {}
 }
 
 // Request massage for CreateEvent
