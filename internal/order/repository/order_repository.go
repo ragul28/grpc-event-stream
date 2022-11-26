@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	CreateOrder(*pb.EventRequest) (*pb.EventResponse, error)
 	GetOrder(ef *pb.GetEventFilter) (*pb.GetEventResponse, error)
+	GetAllOrders(count, start int) ([]*pb.GetEventResponse, error)
 }
 
 type OrderRepository struct {
@@ -37,7 +38,7 @@ func (repo *OrderRepository) GetOrder(ef *pb.GetEventFilter) (*pb.GetEventRespon
 
 	switch err := row.Scan(&name); err {
 	case sql.ErrNoRows:
-		return nil, fmt.Errorf("No records no table!")
+		return nil, fmt.Errorf("no records no table")
 	case nil:
 		log.Println(ef.Id, name)
 	default:
@@ -45,4 +46,25 @@ func (repo *OrderRepository) GetOrder(ef *pb.GetEventFilter) (*pb.GetEventRespon
 	}
 
 	return &pb.GetEventResponse{Id: ef.Id, Name: name}, nil
+}
+
+func (repo *OrderRepository) GetAllOrders(count, start int) ([]*pb.GetEventResponse, error) {
+
+	sqlStatement := `SELECT name,id from orders LIMIT $1 OFFSET $2`
+	rows, err := repo.DB.Query(sqlStatement, count, start)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	GetEventResponses := []*pb.GetEventResponse{}
+
+	for rows.Next() {
+		var ge *pb.GetEventResponse
+		if err := rows.Scan(&ge.Id, &ge.Name); err != nil {
+			return nil, err
+		}
+		GetEventResponses = append(GetEventResponses, ge)
+	}
+	return GetEventResponses, nil
 }
