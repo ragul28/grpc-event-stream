@@ -49,6 +49,21 @@ func (s *Server) GetEvent(ctx context.Context, filter *pb.GetEventFilter) (*pb.G
 	return res, nil
 }
 
+func (s *Server) GetEvents(filter *pb.GetEventFilter, stream pb.Event_GetEventsServer) error {
+	res, err := s.Repo.GetAllOrders(0, 10)
+	if err != nil {
+		return err
+	}
+
+	for _, ge := range res {
+		if err := stream.Send(ge); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func (s *Server) Check(ctx context.Context, req *healthpb.HealthCheckRequest) (*healthpb.HealthCheckResponse, error) {
 	return &healthpb.HealthCheckResponse{Status: healthpb.HealthCheckResponse_SERVING}, nil
 }
