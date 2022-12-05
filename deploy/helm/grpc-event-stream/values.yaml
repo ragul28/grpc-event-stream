@@ -1,0 +1,23 @@
+global: {}
+
+order-service:
+  enabled: true
+  image: 
+    repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+
+payment-service:
+  enabled: true
+  image: 
+    repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+
+gateway:
+  enabled: true
+  image: 
+    repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+
+nats:
+  image:
+    repository: nats
+    tag: 2.9-alpine
+  jetstream:
+    enabled: true
