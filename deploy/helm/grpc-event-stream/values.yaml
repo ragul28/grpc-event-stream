@@ -4,16 +4,19 @@ order-service:
   enabled: true
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+    tag: 0.1.2
 
 payment-service:
   enabled: true
   image: 
-    repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+    repository: ghcr.io/ragul28/grpc-event-stream/payment-svc
+    tag: 0.1.2
 
 gateway:
   enabled: true
   image: 
-    repository: ghcr.io/ragul28/grpc-event-stream/order-svc
+    repository: ghcr.io/ragul28/grpc-event-stream/gateway
+    tag: 0.1.2
 
 nats:
   image:
