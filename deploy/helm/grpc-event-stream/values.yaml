@@ -5,18 +5,46 @@ order-service:
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/order-svc
     tag: 0.1.2
+  livenessProbe:
+    grpc:
+      port: 8080
+    initialDelaySeconds: 10
+  readinessProbe:
+    grpc:
+      port: 8080
+    initialDelaySeconds: 10
 
 payment-service:
   enabled: true
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/payment-svc
     tag: 0.1.2
+  livenessProbe:
+    grpc:
+      port: 8080
+    initialDelaySeconds: 10
+  readinessProbe:
+    grpc:
+      port: 8080
+    initialDelaySeconds: 10
 
 gateway:
   enabled: true
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/gateway
     tag: 0.1.2
+  livenessProbe:
+    httpGet:
+      path: /api/gw
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 3
+  readinessProbe:
+    httpGet:
+      path: /api/gw
+      port: 8080
+    initialDelaySeconds: 5
+    periodSeconds: 3
 
 # nats:
 #   image:
