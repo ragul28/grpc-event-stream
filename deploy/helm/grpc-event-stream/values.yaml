@@ -18,9 +18,9 @@ gateway:
     repository: ghcr.io/ragul28/grpc-event-stream/gateway
     tag: 0.1.2
 
-nats:
-  image:
-    repository: nats
-    tag: 2.9-alpine
-  jetstream:
-    enabled: true
+# nats:
+#   image:
+#     repository: nats
+#     tag: 2.9-alpine
+#   jetstream:
+#     enabled: true

@@ -4,6 +4,7 @@ description: A Helm chart for Kubernetes
 type: application
 
 version: 0.1.0
+appVersion: 0.1.2
 
 dependencies:
   - name: order-service
@@ -18,7 +19,7 @@ dependencies:
     repository: file://charts/gateway
     version: 0.1.0
     condition: gateway.enabled
-  - name: nats
-    repository: https://nats-io.github.io/k8s/helm/charts/
-    version: 0.19.3
-    condition: nats.enabled
+  # - name: nats
+  #   repository: https://nats-io.github.io/k8s/helm/charts/
+  #   version: 0.19.3
+  #   condition: nats.enabled
