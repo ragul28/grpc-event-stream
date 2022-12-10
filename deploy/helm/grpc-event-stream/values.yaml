@@ -5,6 +5,21 @@ order-service:
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/order-svc
     tag: 0.1.2
+
+  envList:
+  - name: PORT
+    value: "8080"
+  - name: NATS_URL
+    value: "nats://nats:4222"
+  - name: DB_HOST
+    value: "postgres"
+  - name: DB_NAME
+    value: "postgres"
+  - name: DB_USER
+    value: "postgres"
+  - name: DB_PASSWORD
+    value: "postgres"
+
   livenessProbe:
     grpc:
       port: 8080
@@ -19,6 +34,13 @@ payment-service:
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/payment-svc
     tag: 0.1.2
+
+  envList:
+  - name: PORT
+    value: "8080"
+  - name: NATS_URL
+    value: "nats://nats:4222"
+
   livenessProbe:
     grpc:
       port: 8080
@@ -33,6 +55,13 @@ gateway:
   image: 
     repository: ghcr.io/ragul28/grpc-event-stream/gateway
     tag: 0.1.2
+
+  envList:
+  - name: PORT
+    value: "8080"
+  - name: ORDER_GRPC_ADDR
+    value: "order-service:8080"
+
   livenessProbe:
     httpGet:
       path: /api/gw
