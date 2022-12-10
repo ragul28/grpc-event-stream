@@ -36,7 +36,7 @@ spec:
           env:
             {{- range .Values.envList }}
             - name: {{ .name }}
-              value: {{ .value }}
+              value: {{ .value | quote }}
             {{- end }} 
           ports:
             - containerPort: {{ .Values.service.port | default "8080" }}
