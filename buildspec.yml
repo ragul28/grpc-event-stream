@@ -2,7 +2,7 @@ version: 0.2
 
 env:
   variables:
-      BUILDX_VERSION: "v10.0.0"
+      BUILDX_VERSION: "v0.10.0"
       ECR_URL: "701147072243.dkr.ecr.us-east-1.amazonaws.com"
       ECR_REPO_NAME: "grpc-event-stream"
       
