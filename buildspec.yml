@@ -3,6 +3,9 @@ version: 0.2
 env:
   variables:
       BUILDX_VERSION: "v10.0.0"
+      ECR_URL: "701147072243.dkr.ecr.us-east-1.amazonaws.com"
+      ECR_REPO_NAME: "grpc-event-stream"
+      
 phases:
   install:
     commands:
@@ -14,7 +17,7 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 701147072243.dkr.ecr.us-east-1.amazonaws.com
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_URL
   build:
     commands:
       - go mod download
@@ -25,4 +28,4 @@ phases:
       - cd ./build
       - sed -i 's|alpine|public.ecr.aws/docker/library/alpine|g' Dockerfile
       - docker buildx create --use --name crossx
-      - docker buildx build --push --platform=linux/arm64 -t 701147072243.dkr.ecr.us-east-1.amazonaws.com/ecr-test:v1 .
+      - docker buildx build --push --platform=linux/arm64 -t $ECR_URL/$ECR_REPO_NAME:v1 .
