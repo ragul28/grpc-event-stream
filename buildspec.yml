@@ -1,0 +1,28 @@
+version: 0.2
+
+env:
+  variables:
+      BUILDX_VERSION: "v10.0.0"
+phases:
+  install:
+    commands:
+      - docker version
+      - curl -JLO https://github.com/docker/buildx/releases/download/$BUILDX_VERSION/buildx-$BUILDX_VERSION.linux-amd64
+      - mkdir -p ~/.docker/cli-plugins
+      - mv buildx-$BUILDX_VERSION.linux-amd64 ~/.docker/cli-plugins/docker-buildx
+      - chmod a+rx ~/.docker/cli-plugins/docker-buildx
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 701147072243.dkr.ecr.us-east-1.amazonaws.com
+  build:
+    commands:
+      - go mod download
+      - mkdir ./build/bin
+      - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -ldflags="-s -w" -o=./build/bin/. ./cmd/gateway/...
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - cd ./build
+      - sed -i 's|alpine|public.ecr.aws/docker/library/alpine|g' Dockerfile
+      - docker buildx create --use --name crossx
+      - docker buildx build --push --platform=linux/arm64 -t 701147072243.dkr.ecr.us-east-1.amazonaws.com/ecr-test:v1 .
