@@ -1,6 +1,6 @@
 # gRPC Event stream
 
-Event stream based Go microservice project using Nats JetStream, PostgresSQL & gRPC. Exhibit project with cloud native ecosystem & tools
+Event stream based Go microservice project using Nats JetStream, PostgresSQL & gRPC. Exhibit project to show case usage of cloud native ecosystem & tools.
 
 ## Prerequisites
 
